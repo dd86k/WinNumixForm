@@ -41,13 +41,25 @@ namespace WinNumix
             }
         }
 
+        new Size ClientSize
+        {
+            get
+            {
+                return new Size(Width, Height - NumixRessources.Height);
+            }
+            set
+            {
+                base.ClientSize = new Size(value.Width, value.Height - NumixRessources.Height);
+            }
+        }
+
         /// <summary>
         /// Places the Numix theme on the current form.
         /// </summary>
         void InitializeNumixTheme()
         {
             SuspendLayout();
-
+            
             // Initial button position: FormWidth - IconWidth - Padding
             int InitialButtonPos = Width - 24 - 3;
 
@@ -223,6 +235,8 @@ namespace WinNumix
 
     class NumixRessources
     {
+        internal const int Height = 24;
+
         static readonly string AssemblyName = Assembly.GetExecutingAssembly().GetName().Name;
 
         #region Close icons
