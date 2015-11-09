@@ -13,36 +13,32 @@ namespace WinNumix
 {
     partial class Form1
     {
-        //TODO: Move ressources out of this class.
-        // ..Includes formMouseDown, lastLocation, and AssemblyNameString
-
-        bool formMouseDown;
-        Point lastLocation;
-
-        static readonly string AssemblyNameString = Assembly.GetExecutingAssembly().GetName().Name;
-
-        // Close button
+        // Controls
         PictureBox btnCloseButton = new PictureBox();
-        Image imgCloseActive = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.close-active.png"));
-        Image imgCloseInactive = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.close-inactive.png"));
-        Image imgCloseHover = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.close-prelight.png"));
-        Image imgClosePressed = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.close-pressed.png"));
-
-        // Minimize button
         PictureBox btnMinimizeButton = new PictureBox();
-        Image imgMinimizeActice = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.hide-active.png"));
-        Image imgMinimizeInactive = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.hide-inactive.png"));
-        Image imgMinimizeHover = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.hide-prelight.png"));
-        Image imgMinimizePressed = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.hide-pressed.png"));
-
-        // Maximize button
         PictureBox btnMaximizeButton = new PictureBox();
-        Image imgMaximizeActive = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.maximize-active.png"));
-        Image imgMaximizeInactive = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.maximize-inactive.png"));
-        Image imgMaximizeHover = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.maximize-prelight.png"));
-        Image imgMaximizePressed = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.maximize-pressed.png"));
-
         PictureBox TitleBar = new PictureBox();
+        Label TitleBarText = new Label();
+
+        /// <summary>
+        /// Get or set the text of the current form.
+        /// </summary>
+        /// <remarks>
+        /// This overrides and masks the Form.Text property.
+        /// </remarks>
+        new string Text
+        {
+            get
+            {
+                return TitleBarText.Text;
+            }
+            set
+            {
+                base.Text =
+                    TitleBarText.Text =
+                    value;
+            }
+        }
 
         void InitializeNumixTheme()
         {
@@ -65,7 +61,7 @@ namespace WinNumix
             btnCloseButton.Size = new Size(24, 24);
             btnCloseButton.SizeMode = PictureBoxSizeMode.AutoSize;
             btnCloseButton.Location = new Point(InitialButtonPos, 0);
-            btnCloseButton.Image = imgCloseActive;
+            btnCloseButton.Image = NumixRessources.CloseActive;
             // Events
             btnCloseButton.MouseEnter += CloseButton_MouseEnter;
             btnCloseButton.MouseLeave += CloseButton_MouseLeave;
@@ -77,7 +73,7 @@ namespace WinNumix
             btnMaximizeButton.Size = new Size(24, 24);
             btnMaximizeButton.SizeMode = PictureBoxSizeMode.AutoSize;
             btnMaximizeButton.Location = new Point(InitialButtonPos - btnMaximizeButton.Width, 0);
-            btnMaximizeButton.Image = imgMaximizeActive;
+            btnMaximizeButton.Image = NumixRessources.MaximizeActive;
             // Events
             btnMaximizeButton.MouseEnter += BtnMaximizeButton_MouseEnter;
             btnMaximizeButton.MouseLeave += BtnMaximizeButton_MouseLeave;
@@ -89,7 +85,7 @@ namespace WinNumix
             btnMinimizeButton.Size = new Size(24, 24);
             btnMinimizeButton.SizeMode = PictureBoxSizeMode.AutoSize;
             btnMinimizeButton.Location = new Point(InitialButtonPos - (btnMaximizeButton.Size.Width + btnMinimizeButton.Width), 0);
-            btnMinimizeButton.Image = imgMinimizeActice;
+            btnMinimizeButton.Image = NumixRessources.MinimizeActice;
             // Events
             btnMinimizeButton.MouseEnter += BtnMinimizeButton_MouseEnter;
             btnMinimizeButton.MouseLeave += BtnMinimizeButton_MouseLeave;
@@ -97,9 +93,21 @@ namespace WinNumix
             btnMinimizeButton.MouseUp += BtnMinimizeButton_MouseUp;
             #endregion
 
+            #region Title
+            TitleBarText.AutoSize = true;
+            TitleBarText.Location = new Point
+            {
+                X = (TitleBar.Width / 2) - (TitleBarText.Width / 2),
+                Y = (TitleBar.Height / 2) - (TitleBarText.Height / 4)
+            };
+            TitleBarText.Anchor = AnchorStyles.Right & AnchorStyles.Left;
+            TitleBarText.ForeColor = Color.White;
+            #endregion
+
             TitleBar.Controls.Add(btnMinimizeButton);
             TitleBar.Controls.Add(btnMaximizeButton);
             TitleBar.Controls.Add(btnCloseButton);
+            TitleBar.Controls.Add(TitleBarText);
             Controls.Add(TitleBar);
 
             ResumeLayout(false);
@@ -108,21 +116,22 @@ namespace WinNumix
         #region Titlebar
         private void TitleBar_MouseUp(object sender, MouseEventArgs e)
         {
-            formMouseDown = false;
+            NumixRessources.formMouseDown = false;
         }
 
         private void TitleBar_MouseDown(object sender, MouseEventArgs e)
         {
-            formMouseDown = true;
-            lastLocation = e.Location;
+            NumixRessources.formMouseDown = true;
+            NumixRessources.lastLocation = e.Location;
         }
 
         private void TitleBar_MouseMove(object sender, MouseEventArgs e)
         {
-            if (formMouseDown)
+            if (NumixRessources.formMouseDown)
             {
                 Location = 
-                    new Point((Location.X - lastLocation.X) + e.X, (Location.Y - lastLocation.Y) + e.Y);
+                    new Point((Location.X - NumixRessources.lastLocation.X) + e.X,
+                    (Location.Y - NumixRessources.lastLocation.Y) + e.Y);
 
                 Update();
             }
@@ -132,17 +141,17 @@ namespace WinNumix
         #region Close Button
         private void CloseButton_MouseEnter(object sender, EventArgs e)
         {
-            btnCloseButton.Image = imgCloseHover;
+            btnCloseButton.Image = NumixRessources.CloseHover;
         }
 
         private void CloseButton_MouseLeave(object sender, EventArgs e)
         {
-            btnCloseButton.Image = imgCloseActive;
+            btnCloseButton.Image = NumixRessources.CloseActive;
         }
 
         private void CloseButton_MouseDown(object sender, MouseEventArgs e)
         {
-            btnCloseButton.Image = imgClosePressed;
+            btnCloseButton.Image = NumixRessources.ClosePressed;
         }
 
         private void CloseButton_MouseUp(object sender, MouseEventArgs e)
@@ -156,17 +165,17 @@ namespace WinNumix
         #region Maximize Button
         private void BtnMaximizeButton_MouseEnter(object sender, EventArgs e)
         {
-            btnMaximizeButton.Image = imgMaximizeHover;
+            btnMaximizeButton.Image = NumixRessources.MaximizeHover;
         }
 
         private void BtnMaximizeButton_MouseLeave(object sender, EventArgs e)
         {
-            btnMaximizeButton.Image = imgMaximizeActive;
+            btnMaximizeButton.Image = NumixRessources.MaximizeActive;
         }
 
         private void BtnMaximizeButton_MouseDown(object sender, MouseEventArgs e)
         {
-            btnMaximizeButton.Image = imgMaximizePressed;
+            btnMaximizeButton.Image = NumixRessources.MaximizePressed;
         }
 
         private void BtnMaximizeButton_MouseUp(object sender, MouseEventArgs e)
@@ -178,17 +187,17 @@ namespace WinNumix
         #region Minimize Button
         private void BtnMinimizeButton_MouseEnter(object sender, EventArgs e)
         {
-            btnMinimizeButton.Image = imgMinimizeHover;
+            btnMinimizeButton.Image = NumixRessources.MinimizeHover;
         }
 
         private void BtnMinimizeButton_MouseLeave(object sender, EventArgs e)
         {
-            btnMinimizeButton.Image = imgMinimizeActice;
+            btnMinimizeButton.Image = NumixRessources.MinimizeActice;
         }
 
         private void BtnMinimizeButton_MouseDown(object sender, MouseEventArgs e)
         {
-            btnMinimizeButton.Image = imgMinimizePressed;
+            btnMinimizeButton.Image = NumixRessources.MinimizePressed;
         }
 
         private void BtnMinimizeButton_MouseUp(object sender, MouseEventArgs e)
@@ -196,5 +205,34 @@ namespace WinNumix
             //TODO: Minimize function
         }
         #endregion
+    }
+
+    class NumixRessources
+    {
+        static readonly string AssemblyNameString = Assembly.GetExecutingAssembly().GetName().Name;
+
+        #region Close icons
+        static public Image CloseActive = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.close-active.png"));
+        static public Image CloseInactive = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.close-inactive.png"));
+        static public Image CloseHover = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.close-prelight.png"));
+        static public Image ClosePressed = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.close-pressed.png"));
+        #endregion
+
+        #region Minimize icons
+        static public Image MinimizeActice = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.hide-active.png"));
+        static public Image MinimizeInactive = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.hide-inactive.png"));
+        static public Image MinimizeHover = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.hide-prelight.png"));
+        static public Image MinimizePressed = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.hide-pressed.png"));
+        #endregion
+
+        #region Maximize icons
+        static public Image MaximizeActive = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.maximize-active.png"));
+        static public Image MaximizeInactive = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.maximize-inactive.png"));
+        static public Image MaximizeHover = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.maximize-prelight.png"));
+        static public Image MaximizePressed = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyNameString}.Numix.maximize-pressed.png"));
+        #endregion
+
+        static internal bool formMouseDown;
+        static internal Point lastLocation;
     }
 }
