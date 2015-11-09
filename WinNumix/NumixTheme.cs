@@ -97,12 +97,14 @@ namespace WinNumix
             btnMinimizeButton.MouseUp += BtnMinimizeButton_MouseUp;
             #endregion
 
-            #region Title
+            #region Text
             TitleBarText.AutoSize = true;
+            TitleBarText.Font = new Font("*", 9, FontStyle.Bold);
             TitleBarText.Location = new Point
             {
                 X = (TitleBar.Width / 2) - (TitleBarText.Width / 2),
-                Y = (TitleBar.Height / 2) - (TitleBarText.Height / 4)
+                // Labels are weird in height ok
+                Y = ((TitleBar.Height / 2) - (TitleBarText.Height / 2)) + 3
             };
             TitleBarText.Anchor = AnchorStyles.Right & AnchorStyles.Left;
             TitleBarText.ForeColor = Color.White;
@@ -124,9 +126,7 @@ namespace WinNumix
 
             ResumeLayout(false);
         }
-
         
-
         // -- Events --
 
         #region Titlebar

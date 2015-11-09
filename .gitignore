@@ -3,7 +3,7 @@ Thumbs.db
 ehthumbs.db
 *\bin
 *\obj
-.vs
+.vs\*
 
 # Folder config file
 Desktop.ini
