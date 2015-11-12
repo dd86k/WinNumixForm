@@ -10,7 +10,7 @@ namespace WinNumix
             InitializeComponent();
             InitializeNumixTheme();
 
-            
+
         }
     }
 }

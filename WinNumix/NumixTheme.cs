@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 //TODO: Make form resizable.
 // Details:
-// - 3 Pixels large control (what control?)
+// - 3 Pixels large control (which control?)
 // - onHover = Cursor
 // - onMouseDown = you know
 
@@ -25,7 +25,7 @@ namespace WinNumix
         /// Get or set the text of the current form.
         /// </summary>
         /// <remarks>
-        /// This overrides and masks the Form.Text property.
+        /// This overrides the Form.Text property.
         /// </remarks>
         new string Text
         {
@@ -42,19 +42,22 @@ namespace WinNumix
         }
 
         /// <summary>
-        /// Get or set the size of the client.
+        /// Gets or sets the size of the client area of the form.
         /// </summary>
+        /// <remarks>
+        /// This overrides the Form.ClientSize property.
+        /// </remarks>
         new Size ClientSize
         {
             get
             {
                 return new Size(Width,
-                    Height - NumixRessources.TitleBarHeight);
+                    Height - NumixRessources.IconHeight);
             }
             set
             {
                 base.ClientSize = new Size(value.Width, 
-                    value.Height - NumixRessources.TitleBarHeight);
+                    value.Height - NumixRessources.IconHeight);
             }
         }
 
@@ -64,25 +67,16 @@ namespace WinNumix
         void InitializeNumixTheme()
         {
             SuspendLayout();
-            
-            // Initial button position: FormWidth - IconWidth - Padding
-            int InitialButtonPos = Width - NumixRessources.TitleBarHeight - 3;
 
-            #region Titlebar
-            TitleBar.Size = new Size(Width, 24);
-            TitleBar.Anchor = AnchorStyles.Right & AnchorStyles.Left;
-            TitleBar.BackColor = Color.FromArgb(45, 45, 45);
-            // Events
-            TitleBar.MouseDown += TitleBar_MouseDown;
-            TitleBar.MouseMove += TitleBar_MouseMove;
-            TitleBar.MouseUp += TitleBar_MouseUp;
-            #endregion
+            // Initial button position: FormWidth - IconWidth - Padding
+            int InitialButtonPos = Width - NumixRessources.IconHeight - 3;
 
             #region btnCloseButton
             btnCloseButton.Size = new Size(24, 24);
             btnCloseButton.SizeMode = PictureBoxSizeMode.StretchImage;
             btnCloseButton.Location = new Point(InitialButtonPos, 0);
             btnCloseButton.Image = NumixRessources.CloseActive;
+            btnCloseButton.Anchor = AnchorStyles.Right;
             // Events
             btnCloseButton.MouseEnter += CloseButton_MouseEnter;
             btnCloseButton.MouseLeave += CloseButton_MouseLeave;
@@ -95,6 +89,7 @@ namespace WinNumix
             btnMaximizeButton.SizeMode = PictureBoxSizeMode.StretchImage;
             btnMaximizeButton.Location = new Point(InitialButtonPos - btnMaximizeButton.Width, 0);
             btnMaximizeButton.Image = NumixRessources.MaximizeActive;
+            btnMaximizeButton.Anchor = AnchorStyles.Right;
             // Events
             btnMaximizeButton.MouseEnter += BtnMaximizeButton_MouseEnter;
             btnMaximizeButton.MouseLeave += BtnMaximizeButton_MouseLeave;
@@ -107,11 +102,23 @@ namespace WinNumix
             btnMinimizeButton.SizeMode = PictureBoxSizeMode.StretchImage;
             btnMinimizeButton.Location = new Point(InitialButtonPos - (btnMaximizeButton.Size.Width + btnMinimizeButton.Width), 0);
             btnMinimizeButton.Image = NumixRessources.MinimizeActice;
+            btnMinimizeButton.Anchor = AnchorStyles.Right;
             // Events
             btnMinimizeButton.MouseEnter += BtnMinimizeButton_MouseEnter;
             btnMinimizeButton.MouseLeave += BtnMinimizeButton_MouseLeave;
             btnMinimizeButton.MouseDown += BtnMinimizeButton_MouseDown;
             btnMinimizeButton.MouseUp += BtnMinimizeButton_MouseUp;
+            #endregion
+
+            #region Titlebar
+            TitleBar.Size = new Size(Width, 24);
+            TitleBar.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Top;
+            TitleBar.BackColor = Color.FromArgb(45, 45, 45);
+            // Events
+            TitleBar.MouseDown += TitleBar_MouseDown;
+            TitleBar.MouseMove += TitleBar_MouseMove;
+            TitleBar.MouseUp += TitleBar_MouseUp;
+            TitleBar.DoubleClick += TitleBar_DoubleClick;
             #endregion
 
             #region Text
@@ -120,11 +127,15 @@ namespace WinNumix
             TitleBarText.Location = new Point
             (
                 (TitleBar.Width / 2) - (TitleBarText.Width / 2),
-                // Labels are weird in height ok
                 ((TitleBar.Height / 2) - (TitleBarText.Height / 2)) + 3
             );
-            TitleBarText.Anchor = AnchorStyles.Right & AnchorStyles.Left;
+            TitleBarText.Anchor = AnchorStyles.Top;
             TitleBarText.ForeColor = Color.White;
+            // Events
+            TitleBarText.MouseDown += TitleBarText_MouseDown;
+            TitleBarText.MouseMove += TitleBarText_MouseMove;
+            TitleBarText.MouseUp += TitleBarText_MouseUp;
+            TitleBarText.DoubleClick += TitleBarText_DoubleClick;
             #endregion
 
             #region Icon (User defined)
@@ -143,10 +154,13 @@ namespace WinNumix
 
             ResumeLayout(false);
         }
-        
+
         // -- Events --
+        //TODO: (PROPOSAL) Move events to a new class, pass this as argument
 
         #region Titlebar
+        // -- Bar --
+
         private void TitleBar_MouseUp(object sender, MouseEventArgs e)
         {
             NumixRessources.formMouseDown = false;
@@ -162,12 +176,47 @@ namespace WinNumix
         {
             if (NumixRessources.formMouseDown)
             {
-                Location = 
+                Location =
                     new Point((Location.X - NumixRessources.lastLocation.X) + e.X,
                     (Location.Y - NumixRessources.lastLocation.Y) + e.Y);
 
                 Update();
             }
+        }
+
+        private void TitleBar_DoubleClick(object sender, EventArgs e)
+        {
+            ToggleMaximize();
+        }
+
+        // -- Text --
+
+        private void TitleBarText_MouseUp(object sender, MouseEventArgs e)
+        {
+            NumixRessources.formMouseDown = false;
+        }
+
+        private void TitleBarText_MouseDown(object sender, MouseEventArgs e)
+        {
+            NumixRessources.formMouseDown = true;
+            NumixRessources.lastLocation = e.Location;
+        }
+
+        private void TitleBarText_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (NumixRessources.formMouseDown)
+            {
+                Location =
+                    new Point((Location.X - NumixRessources.lastLocation.X) + e.X,
+                    (Location.Y - NumixRessources.lastLocation.Y) + e.Y);
+
+                Update();
+            }
+        }
+
+        private void TitleBarText_DoubleClick(object sender, EventArgs e)
+        {
+            ToggleMaximize();
         }
         #endregion
 
@@ -211,7 +260,7 @@ namespace WinNumix
 
         private void BtnMaximizeButton_MouseUp(object sender, MouseEventArgs e)
         {
-            //TODO: Maximize function
+            ToggleMaximize();
         }
         #endregion
 
@@ -233,17 +282,37 @@ namespace WinNumix
 
         private void BtnMinimizeButton_MouseUp(object sender, MouseEventArgs e)
         {
-            //TODO: Minimize function
+            WindowState = FormWindowState.Minimized;
         }
         #endregion
+
+        // -- Form related methods --
+
+        void ToggleMaximize()
+        {
+            if (WindowState == FormWindowState.Normal)
+                WindowState = FormWindowState.Maximized;
+            else
+                WindowState = FormWindowState.Normal;
+
+            TitleBarText.Location = new Point
+            (
+                (TitleBar.Width / 2) - (TitleBarText.Width / 2),
+                ((TitleBar.Height / 2) - (TitleBarText.Height / 2))
+            );
+        }
     }
 
     class NumixRessources
     {
+        // Used when dragging the form around.
+        static internal bool formMouseDown;
+        static internal Point lastLocation;
 
+        // Settings
+        internal const int IconHeight = 24;
 
-        internal const int TitleBarHeight = 24;
-
+        // Assembly-related properties
         static readonly string AssemblyName = Assembly.GetExecutingAssembly().GetName().Name;
 
         #region Close icons
@@ -266,10 +335,6 @@ namespace WinNumix
         static public Image MinimizeHover = GetImageFromStream($"{AssemblyName}.Numix.hide-prelight.png");
         static public Image MinimizePressed = GetImageFromStream($"{AssemblyName}.Numix.hide-pressed.png");
         #endregion
-
-        // Used when dragging the form around.
-        static internal bool formMouseDown;
-        static internal Point lastLocation;
 
         static Image GetImageFromStream(string pAssemblyPath)
         {
