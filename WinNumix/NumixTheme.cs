@@ -46,6 +46,7 @@ namespace WinNumix
         /// </summary>
         /// <remarks>
         /// This overrides the Form.ClientSize property.
+        /// With no border styles, Size is the same size as ClientSize.
         /// </remarks>
         new Size ClientSize
         {
@@ -298,7 +299,7 @@ namespace WinNumix
             TitleBarText.Location = new Point
             (
                 (TitleBar.Width / 2) - (TitleBarText.Width / 2),
-                ((TitleBar.Height / 2) - (TitleBarText.Height / 2))
+                TitleBarText.Location.Y
             );
         }
     }
