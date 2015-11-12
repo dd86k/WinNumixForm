@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 //TODO: Make form resizable.
 // Details:
-// - 3 Pixels large control (which?)
+// - 3 Pixels large control (what control?)
 // - onHover = Cursor
 // - onMouseDown = you know
 
@@ -41,15 +41,20 @@ namespace WinNumix
             }
         }
 
+        /// <summary>
+        /// Get or set the size of the client.
+        /// </summary>
         new Size ClientSize
         {
             get
             {
-                return new Size(Width, Height - NumixRessources.Height);
+                return new Size(Width,
+                    Height - NumixRessources.TitleBarHeight);
             }
             set
             {
-                base.ClientSize = new Size(value.Width, value.Height - NumixRessources.Height);
+                base.ClientSize = new Size(value.Width, 
+                    value.Height - NumixRessources.TitleBarHeight);
             }
         }
 
@@ -61,7 +66,7 @@ namespace WinNumix
             SuspendLayout();
             
             // Initial button position: FormWidth - IconWidth - Padding
-            int InitialButtonPos = Width - 24 - 3;
+            int InitialButtonPos = Width - NumixRessources.TitleBarHeight - 3;
 
             #region Titlebar
             TitleBar.Size = new Size(Width, 24);
@@ -113,11 +118,11 @@ namespace WinNumix
             TitleBarText.AutoSize = true;
             TitleBarText.Font = new Font("*", 9, FontStyle.Bold);
             TitleBarText.Location = new Point
-            {
-                X = (TitleBar.Width / 2) - (TitleBarText.Width / 2),
+            (
+                (TitleBar.Width / 2) - (TitleBarText.Width / 2),
                 // Labels are weird in height ok
-                Y = ((TitleBar.Height / 2) - (TitleBarText.Height / 2)) + 3
-            };
+                ((TitleBar.Height / 2) - (TitleBarText.Height / 2)) + 3
+            );
             TitleBarText.Anchor = AnchorStyles.Right & AnchorStyles.Left;
             TitleBarText.ForeColor = Color.White;
             #endregion
@@ -235,33 +240,41 @@ namespace WinNumix
 
     class NumixRessources
     {
-        internal const int Height = 24;
+
+
+        internal const int TitleBarHeight = 24;
 
         static readonly string AssemblyName = Assembly.GetExecutingAssembly().GetName().Name;
 
         #region Close icons
-        static public Image CloseActive = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyName}.Numix.close-active.png"));
-        static public Image CloseInactive = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyName}.Numix.close-inactive.png"));
-        static public Image CloseHover = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyName}.Numix.close-prelight.png"));
-        static public Image ClosePressed = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyName}.Numix.close-pressed.png"));
+        static public Image CloseActive = GetImageFromStream($"{AssemblyName}.Numix.close-active.png");
+        static public Image CloseInactive = GetImageFromStream($"{AssemblyName}.Numix.close-inactive.png");
+        static public Image CloseHover = GetImageFromStream($"{AssemblyName}.Numix.close-prelight.png");
+        static public Image ClosePressed = GetImageFromStream($"{AssemblyName}.Numix.close-pressed.png");
         #endregion
 
         #region Maximize icons
-        static public Image MaximizeActive = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyName}.Numix.maximize-active.png"));
-        static public Image MaximizeInactive = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyName}.Numix.maximize-inactive.png"));
-        static public Image MaximizeHover = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyName}.Numix.maximize-prelight.png"));
-        static public Image MaximizePressed = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyName}.Numix.maximize-pressed.png"));
+        static public Image MaximizeActive = GetImageFromStream($"{AssemblyName}.Numix.maximize-active.png");
+        static public Image MaximizeInactive = GetImageFromStream($"{AssemblyName}.Numix.maximize-inactive.png");
+        static public Image MaximizeHover = GetImageFromStream($"{AssemblyName}.Numix.maximize-prelight.png");
+        static public Image MaximizePressed = GetImageFromStream($"{AssemblyName}.Numix.maximize-pressed.png");
         #endregion
 
         #region Minimize icons
-        static public Image MinimizeActice = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyName}.Numix.hide-active.png"));
-        static public Image MinimizeInactive = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyName}.Numix.hide-inactive.png"));
-        static public Image MinimizeHover = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyName}.Numix.hide-prelight.png"));
-        static public Image MinimizePressed = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{AssemblyName}.Numix.hide-pressed.png"));
+        static public Image MinimizeActice = GetImageFromStream($"{AssemblyName}.Numix.hide-active.png");
+        static public Image MinimizeInactive = GetImageFromStream($"{AssemblyName}.Numix.hide-inactive.png");
+        static public Image MinimizeHover = GetImageFromStream($"{AssemblyName}.Numix.hide-prelight.png");
+        static public Image MinimizePressed = GetImageFromStream($"{AssemblyName}.Numix.hide-pressed.png");
         #endregion
 
         // Used when dragging the form around.
         static internal bool formMouseDown;
         static internal Point lastLocation;
+
+        static Image GetImageFromStream(string pAssemblyPath)
+        {
+            return
+                 Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream(pAssemblyPath));
+        }
     }
 }
