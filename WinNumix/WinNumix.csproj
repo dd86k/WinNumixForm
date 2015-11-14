@@ -58,6 +58,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Numix\close-active.png" />
     <EmbeddedResource Include="Numix\close-inactive.png" />
     <EmbeddedResource Include="Numix\close-pressed.png" />

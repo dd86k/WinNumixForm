@@ -13,13 +13,18 @@ namespace WinNumix
 {
     partial class Form1
     {
-        // -- Controls --
+        // -- Control box --
         PictureBox btnCloseButton = new PictureBox();
         PictureBox btnMinimizeButton = new PictureBox();
         PictureBox btnMaximizeButton = new PictureBox();
+        // -- Titlebar --
         PictureBox TitleBar = new PictureBox();
         Label TitleBarText = new Label();
         PictureBox TitleBarIcon = new PictureBox();
+        // -- Borders --
+        PictureBox FormBorderLeft = new PictureBox();
+        PictureBox FormBorderRight = new PictureBox();
+        PictureBox FormBorderBottom = new PictureBox();
 
         /// <summary>
         /// Get or set the text of the current form.
@@ -122,13 +127,37 @@ namespace WinNumix
             TitleBar.DoubleClick += TitleBar_DoubleClick;
             #endregion
 
+            #region Borders
+            // -- Left --
+            FormBorderLeft.Size = new Size(2, ClientSize.Height - 2);
+            FormBorderLeft.Location = new Point(0, Size.Height - ClientSize.Height);
+            // Events
+            // -- Right --
+            FormBorderRight.Size = new Size(2, ClientSize.Height - 2);
+            FormBorderRight.Location = new Point(Size.Width - 2, Size.Height - ClientSize.Height);
+            // -- Bottom --
+            FormBorderBottom.Size = new Size(Size.Width, 2);
+            FormBorderBottom.Location = new Point(0, Size.Height - 2);
+            FormBorderBottom.Cursor = Cursors.SizeNS;
+
+            FormBorderLeft.Cursor =
+                FormBorderRight.Cursor =
+                Cursors.SizeWE;
+            FormBorderLeft.BackColor =
+                FormBorderBottom.BackColor =
+                FormBorderRight.BackColor =
+                Color.FromArgb(45, 45, 45);
+            #endregion
+
             #region Text
+            TitleBarText.Font = new Font("*", 8, FontStyle.Bold);
             TitleBarText.AutoSize = true;
-            TitleBarText.Font = new Font("*", 9, FontStyle.Bold);
+            TitleBarText.TextAlign = ContentAlignment.MiddleCenter;
             TitleBarText.Location = new Point
             (
                 (TitleBar.Width / 2) - (TitleBarText.Width / 2),
-                ((TitleBar.Height / 2) - (TitleBarText.Height / 2)) + 3
+                //TODO: Fix label height for Mono and .NET compability
+                ((TitleBar.Height / 2) - (TitleBarText.Height / 2)) + 4
             );
             TitleBarText.Anchor = AnchorStyles.Top;
             TitleBarText.ForeColor = Color.White;
@@ -153,11 +182,15 @@ namespace WinNumix
             TitleBar.Controls.Add(TitleBarIcon);
             Controls.Add(TitleBar);
 
+            Controls.Add(FormBorderLeft);
+            Controls.Add(FormBorderRight);
+            Controls.Add(FormBorderBottom);
+
             ResumeLayout(false);
         }
 
         // -- Events --
-        //TODO: (PROPOSAL) Move events to a new class, pass this as argument
+        //TODO: (PROPOSAL) Move events to a new class, pass this (the form) as argument
 
         #region Titlebar
         // -- Bar --
