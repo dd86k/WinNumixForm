@@ -130,8 +130,8 @@ namespace WinNumix
 
             #region Borders
             // -- Left --
-            FormBorderLeft.Size = new Size(NumixRessources.FormBorderThickness, ClientSize.Height - NumixRessources.FormBorderThickness);
-            FormBorderLeft.Location = new Point(0, Size.Height - ClientSize.Height);
+            FormBorderLeft.Size = new Size(NumixRessources.Thickness, Size.Height - (NumixRessources.Thickness * 2));
+            FormBorderLeft.Location = new Point(0, NumixRessources.Thickness);
             FormBorderLeft.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Bottom;
             // Events
             FormBorderLeft.MouseDown += FormBorderLeft_MouseDown;
@@ -139,8 +139,8 @@ namespace WinNumix
             FormBorderLeft.MouseUp += FormBorderLeft_MouseUp;
 
             // -- Right --
-            FormBorderRight.Size = new Size(NumixRessources.FormBorderThickness, ClientSize.Height - NumixRessources.FormBorderThickness);
-            FormBorderRight.Location = new Point(Size.Width - NumixRessources.FormBorderThickness, Size.Height - ClientSize.Height);
+            FormBorderRight.Size = new Size(NumixRessources.Thickness, Size.Height - (NumixRessources.Thickness * 2));
+            FormBorderRight.Location = new Point(Size.Width - NumixRessources.Thickness, NumixRessources.Thickness);
             FormBorderRight.Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom;
             // Events
             FormBorderRight.MouseDown += FormBorderRight_MouseDown;
@@ -148,7 +148,7 @@ namespace WinNumix
             FormBorderRight.MouseUp += FormBorderRight_MouseUp;
 
             // -- Top --
-            FormBorderTop.Size = new Size(Size.Width, NumixRessources.FormBorderThickness);
+            FormBorderTop.Size = new Size(Size.Width, NumixRessources.Thickness);
             FormBorderTop.Location = new Point(0, 0);
             FormBorderTop.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             // Events
@@ -157,8 +157,8 @@ namespace WinNumix
             FormBorderTop.MouseUp += FormBorderTop_MouseUp;
 
             // -- Bottom --
-            FormBorderBottom.Size = new Size(Size.Width, NumixRessources.FormBorderThickness);
-            FormBorderBottom.Location = new Point(0, Size.Height - NumixRessources.FormBorderThickness);
+            FormBorderBottom.Size = new Size(Size.Width, NumixRessources.Thickness);
+            FormBorderBottom.Location = new Point(0, Size.Height - NumixRessources.Thickness);
             FormBorderBottom.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             // Events
             FormBorderBottom.MouseDown += FormBorderBottom_MouseDown;
@@ -198,13 +198,17 @@ namespace WinNumix
 
             #region Icon (User defined)
             TitleBarIcon.Size =
-                new Size(NumixRessources.TitleBarHeight - NumixRessources.FormBorderThickness,
-                NumixRessources.TitleBarHeight - NumixRessources.FormBorderThickness);
+                new Size(NumixRessources.TitleBarHeight - NumixRessources.Thickness,
+                NumixRessources.TitleBarHeight - NumixRessources.Thickness);
             TitleBarIcon.SizeMode = PictureBoxSizeMode.StretchImage;
-            TitleBarIcon.Location = new Point(NumixRessources.FormBorderThickness,
-                NumixRessources.FormBorderThickness);
+            TitleBarIcon.Location = new Point(NumixRessources.Thickness,
+                NumixRessources.Thickness);
             TitleBarIcon.Image = Icon.ToBitmap();
             #endregion
+
+            Controls.Add(FormBorderLeft);
+            Controls.Add(FormBorderRight);
+            Controls.Add(FormBorderBottom);
 
             TitleBar.Controls.Add(FormBorderTop);
             TitleBar.Controls.Add(btnMinimizeButton);
@@ -213,11 +217,7 @@ namespace WinNumix
             TitleBar.Controls.Add(TitleBarIcon);
             TitleBar.Controls.Add(TitleBarText);
             Controls.Add(TitleBar);
-
-            Controls.Add(FormBorderLeft);
-            Controls.Add(FormBorderRight);
-            Controls.Add(FormBorderBottom);
-
+            
             ResumeLayout(false);
         }
         
@@ -476,7 +476,7 @@ namespace WinNumix
 
         // Settings
         internal const int TitleBarHeight = 24;
-        internal const int FormBorderThickness = 3;
+        internal const int Thickness = 3;
 
         // Assembly-related properties
         static readonly string AssemblyName = Assembly.GetExecutingAssembly().GetName().Name;
