@@ -24,6 +24,7 @@ namespace WinNumix
         // -- Borders --
         PictureBox FormBorderLeft = new PictureBox();
         PictureBox FormBorderRight = new PictureBox();
+        PictureBox FormBorderTop = new PictureBox();
         PictureBox FormBorderBottom = new PictureBox();
 
         /// <summary>
@@ -58,12 +59,12 @@ namespace WinNumix
             get
             {
                 return new Size(Width,
-                    Height - NumixRessources.IconHeight);
+                    Height - NumixRessources.TitleBarHeight);
             }
             set
             {
                 base.ClientSize = new Size(value.Width, 
-                    value.Height - NumixRessources.IconHeight);
+                    value.Height - NumixRessources.TitleBarHeight);
             }
         }
 
@@ -75,7 +76,7 @@ namespace WinNumix
             SuspendLayout();
 
             // Initial button position: FormWidth - IconWidth - Padding
-            int InitialButtonPos = Width - NumixRessources.IconHeight - 3;
+            int InitialButtonPos = Width - NumixRessources.TitleBarHeight - 3;
 
             #region btnCloseButton
             btnCloseButton.Size = new Size(24, 24);
@@ -129,17 +130,44 @@ namespace WinNumix
 
             #region Borders
             // -- Left --
-            FormBorderLeft.Size = new Size(2, ClientSize.Height - 2);
+            FormBorderLeft.Size = new Size(NumixRessources.FormBorderThickness, ClientSize.Height - NumixRessources.FormBorderThickness);
             FormBorderLeft.Location = new Point(0, Size.Height - ClientSize.Height);
+            FormBorderLeft.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Bottom;
             // Events
-            // -- Right --
-            FormBorderRight.Size = new Size(2, ClientSize.Height - 2);
-            FormBorderRight.Location = new Point(Size.Width - 2, Size.Height - ClientSize.Height);
-            // -- Bottom --
-            FormBorderBottom.Size = new Size(Size.Width, 2);
-            FormBorderBottom.Location = new Point(0, Size.Height - 2);
-            FormBorderBottom.Cursor = Cursors.SizeNS;
+            FormBorderLeft.MouseDown += FormBorderLeft_MouseDown;
+            FormBorderLeft.MouseMove += FormBorderLeft_MouseMove;
+            FormBorderLeft.MouseUp += FormBorderLeft_MouseUp;
 
+            // -- Right --
+            FormBorderRight.Size = new Size(NumixRessources.FormBorderThickness, ClientSize.Height - NumixRessources.FormBorderThickness);
+            FormBorderRight.Location = new Point(Size.Width - NumixRessources.FormBorderThickness, Size.Height - ClientSize.Height);
+            FormBorderRight.Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom;
+            // Events
+            FormBorderRight.MouseDown += FormBorderRight_MouseDown;
+            FormBorderRight.MouseMove += FormBorderRight_MouseMove;
+            FormBorderRight.MouseUp += FormBorderRight_MouseUp;
+
+            // -- Top --
+            FormBorderTop.Size = new Size(Size.Width, NumixRessources.FormBorderThickness);
+            FormBorderTop.Location = new Point(0, 0);
+            FormBorderTop.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            // Events
+            FormBorderTop.MouseDown += FormBorderTop_MouseDown;
+            FormBorderTop.MouseMove += FormBorderTop_MouseMove;
+            FormBorderTop.MouseUp += FormBorderTop_MouseUp;
+
+            // -- Bottom --
+            FormBorderBottom.Size = new Size(Size.Width, NumixRessources.FormBorderThickness);
+            FormBorderBottom.Location = new Point(0, Size.Height - NumixRessources.FormBorderThickness);
+            FormBorderBottom.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            // Events
+            FormBorderBottom.MouseDown += FormBorderBottom_MouseDown;
+            FormBorderBottom.MouseMove += FormBorderBottom_MouseMove;
+            FormBorderBottom.MouseUp += FormBorderBottom_MouseUp;
+
+            FormBorderBottom.Cursor =
+                FormBorderTop.Cursor =
+                Cursors.SizeNS;
             FormBorderLeft.Cursor =
                 FormBorderRight.Cursor =
                 Cursors.SizeWE;
@@ -150,9 +178,9 @@ namespace WinNumix
             #endregion
 
             #region Text
-            TitleBarText.Font = new Font("*", 8, FontStyle.Bold);
             TitleBarText.AutoSize = true;
             TitleBarText.TextAlign = ContentAlignment.MiddleCenter;
+            TitleBarText.Font = new Font("*", 8, FontStyle.Bold);
             TitleBarText.Location = new Point
             (
                 (TitleBar.Width / 2) - (TitleBarText.Width / 2),
@@ -169,17 +197,21 @@ namespace WinNumix
             #endregion
 
             #region Icon (User defined)
-            TitleBarIcon.Size = new Size(24, 24);
+            TitleBarIcon.Size =
+                new Size(NumixRessources.TitleBarHeight - NumixRessources.FormBorderThickness,
+                NumixRessources.TitleBarHeight - NumixRessources.FormBorderThickness);
             TitleBarIcon.SizeMode = PictureBoxSizeMode.StretchImage;
-            TitleBarIcon.Location = new Point(3, 0);
+            TitleBarIcon.Location = new Point(NumixRessources.FormBorderThickness,
+                NumixRessources.FormBorderThickness);
             TitleBarIcon.Image = Icon.ToBitmap();
             #endregion
 
+            TitleBar.Controls.Add(FormBorderTop);
             TitleBar.Controls.Add(btnMinimizeButton);
             TitleBar.Controls.Add(btnMaximizeButton);
             TitleBar.Controls.Add(btnCloseButton);
-            TitleBar.Controls.Add(TitleBarText);
             TitleBar.Controls.Add(TitleBarIcon);
+            TitleBar.Controls.Add(TitleBarText);
             Controls.Add(TitleBar);
 
             Controls.Add(FormBorderLeft);
@@ -188,13 +220,10 @@ namespace WinNumix
 
             ResumeLayout(false);
         }
-
+        
         // -- Events --
-        //TODO: (PROPOSAL) Move events to a new class, pass this (the form) as argument
 
         #region Titlebar
-        // -- Bar --
-
         private void TitleBar_MouseUp(object sender, MouseEventArgs e)
         {
             NumixRessources.formMouseDown = false;
@@ -222,9 +251,9 @@ namespace WinNumix
         {
             ToggleMaximize();
         }
+        #endregion
 
-        // -- Text --
-
+        #region Text (Label)
         private void TitleBarText_MouseUp(object sender, MouseEventArgs e)
         {
             NumixRessources.formMouseDown = false;
@@ -320,6 +349,108 @@ namespace WinNumix
         }
         #endregion
 
+        #region Left border
+        private void FormBorderLeft_MouseDown(object sender, MouseEventArgs e)
+        {
+            NumixRessources.formMouseDown = true;
+        }
+
+        private void FormBorderLeft_MouseUp(object sender, MouseEventArgs e)
+        {
+            NumixRessources.formMouseDown = false;
+        }
+
+        private void FormBorderLeft_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (NumixRessources.formMouseDown)
+            {
+                Size =
+                    new Size(Size.Width - e.X,
+                    Size.Height);
+                Location =
+                    new Point(Location.X + e.X,
+                    Location.Y);
+
+                Update();
+            }
+        }
+        #endregion
+
+        #region Right border
+        private void FormBorderRight_MouseUp(object sender, MouseEventArgs e)
+        {
+            NumixRessources.formMouseDown = false;
+        }
+
+        private void FormBorderRight_MouseDown(object sender, MouseEventArgs e)
+        {
+            NumixRessources.formMouseDown = true;
+        }
+
+        private void FormBorderRight_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (NumixRessources.formMouseDown)
+            {
+                Size =
+                    new Size(Size.Width + e.X,
+                    Size.Height);
+
+                Update();
+            }
+        }
+        #endregion
+
+        #region Top border
+        private void FormBorderTop_MouseUp(object sender, MouseEventArgs e)
+        {
+            NumixRessources.formMouseDown = false;
+        }
+
+        private void FormBorderTop_MouseDown(object sender, MouseEventArgs e)
+        {
+            NumixRessources.formMouseDown = true;
+        }
+
+        private void FormBorderTop_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (NumixRessources.formMouseDown)
+            {
+                Size =
+                    new Size(Size.Width,
+                    Size.Height - e.Y);
+                Location =
+                    new Point(Location.X,
+                    Location.Y + e.Y);
+
+                Update();
+            }
+        }
+        #endregion
+
+        #region Bottom border
+        private void FormBorderBottom_MouseUp(object sender, MouseEventArgs e)
+        {
+            NumixRessources.formMouseDown = false;
+        }
+
+        private void FormBorderBottom_MouseDown(object sender, MouseEventArgs e)
+        {
+            NumixRessources.formMouseDown = true;
+        }
+
+        private void FormBorderBottom_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (NumixRessources.formMouseDown)
+            {
+                Size =
+                    new Size(Size.Width,
+                    Size.Height + e.Y);
+
+                Update();
+            }
+        }
+        #endregion
+
         // -- Form related methods --
 
         void ToggleMaximize()
@@ -344,33 +475,34 @@ namespace WinNumix
         static internal Point lastLocation;
 
         // Settings
-        internal const int IconHeight = 24;
+        internal const int TitleBarHeight = 24;
+        internal const int FormBorderThickness = 3;
 
         // Assembly-related properties
         static readonly string AssemblyName = Assembly.GetExecutingAssembly().GetName().Name;
 
         #region Close icons
-        static public Image CloseActive = GetImageFromStream($"{AssemblyName}.Numix.close-active.png");
-        static public Image CloseInactive = GetImageFromStream($"{AssemblyName}.Numix.close-inactive.png");
-        static public Image CloseHover = GetImageFromStream($"{AssemblyName}.Numix.close-prelight.png");
-        static public Image ClosePressed = GetImageFromStream($"{AssemblyName}.Numix.close-pressed.png");
+        static public Image CloseActive = GetImageFromAssemblyStream($"{AssemblyName}.Numix.close-active.png");
+        static public Image CloseInactive = GetImageFromAssemblyStream($"{AssemblyName}.Numix.close-inactive.png");
+        static public Image CloseHover = GetImageFromAssemblyStream($"{AssemblyName}.Numix.close-prelight.png");
+        static public Image ClosePressed = GetImageFromAssemblyStream($"{AssemblyName}.Numix.close-pressed.png");
         #endregion
 
         #region Maximize icons
-        static public Image MaximizeActive = GetImageFromStream($"{AssemblyName}.Numix.maximize-active.png");
-        static public Image MaximizeInactive = GetImageFromStream($"{AssemblyName}.Numix.maximize-inactive.png");
-        static public Image MaximizeHover = GetImageFromStream($"{AssemblyName}.Numix.maximize-prelight.png");
-        static public Image MaximizePressed = GetImageFromStream($"{AssemblyName}.Numix.maximize-pressed.png");
+        static public Image MaximizeActive = GetImageFromAssemblyStream($"{AssemblyName}.Numix.maximize-active.png");
+        static public Image MaximizeInactive = GetImageFromAssemblyStream($"{AssemblyName}.Numix.maximize-inactive.png");
+        static public Image MaximizeHover = GetImageFromAssemblyStream($"{AssemblyName}.Numix.maximize-prelight.png");
+        static public Image MaximizePressed = GetImageFromAssemblyStream($"{AssemblyName}.Numix.maximize-pressed.png");
         #endregion
 
         #region Minimize icons
-        static public Image MinimizeActice = GetImageFromStream($"{AssemblyName}.Numix.hide-active.png");
-        static public Image MinimizeInactive = GetImageFromStream($"{AssemblyName}.Numix.hide-inactive.png");
-        static public Image MinimizeHover = GetImageFromStream($"{AssemblyName}.Numix.hide-prelight.png");
-        static public Image MinimizePressed = GetImageFromStream($"{AssemblyName}.Numix.hide-pressed.png");
+        static public Image MinimizeActice = GetImageFromAssemblyStream($"{AssemblyName}.Numix.hide-active.png");
+        static public Image MinimizeInactive = GetImageFromAssemblyStream($"{AssemblyName}.Numix.hide-inactive.png");
+        static public Image MinimizeHover = GetImageFromAssemblyStream($"{AssemblyName}.Numix.hide-prelight.png");
+        static public Image MinimizePressed = GetImageFromAssemblyStream($"{AssemblyName}.Numix.hide-pressed.png");
         #endregion
 
-        static Image GetImageFromStream(string pAssemblyPath)
+        static Image GetImageFromAssemblyStream(string pAssemblyPath)
         {
             return
                  Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream(pAssemblyPath));
