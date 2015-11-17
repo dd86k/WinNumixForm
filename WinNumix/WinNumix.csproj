@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -70,20 +71,6 @@
     <EmbeddedResource Include="Numix\maximize-active.png" />
     <EmbeddedResource Include="Numix\maximize-inactive.png" />
     <EmbeddedResource Include="Numix\maximize-pressed.png" />
-    <EmbeddedResource Include="Numix\shade-active.png" />
-    <EmbeddedResource Include="Numix\shade-inactive.png" />
-    <EmbeddedResource Include="Numix\shade-pressed.png" />
-    <EmbeddedResource Include="Numix\shade-toggled-active.png" />
-    <EmbeddedResource Include="Numix\shade-toggled-inactive.png" />
-    <EmbeddedResource Include="Numix\shade-toggled-pressed.png" />
-    <EmbeddedResource Include="Numix\stick-active.png" />
-    <EmbeddedResource Include="Numix\stick-inactive.png" />
-    <EmbeddedResource Include="Numix\stick-prelight.png" />
-    <EmbeddedResource Include="Numix\stick-pressed.png" />
-    <EmbeddedResource Include="Numix\stick-toggled-active.png" />
-    <EmbeddedResource Include="Numix\stick-toggled-inactive.png" />
-    <EmbeddedResource Include="Numix\stick-toggled-prelight.png" />
-    <EmbeddedResource Include="Numix\stick-toggled-pressed.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Numix\close-prelight.png" />
